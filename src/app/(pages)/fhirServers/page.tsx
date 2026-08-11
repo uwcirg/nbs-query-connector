@@ -18,7 +18,12 @@ import { FhirServersModal } from "./fhirServersModal";
 import { ModalRef } from "@/app/ui/designSystem/modal/Modal";
 
 export type AuthMethodType =
-  "none" | "basic" | "client_credentials" | "SMART" | "mutual-tls";
+  | "none"
+  | "basic"
+  | "bearer"
+  | "client_credentials"
+  | "SMART"
+  | "mutual-tls";
 
 /**
  * The kind of FHIR endpoint a server exposes. Drives which resource the
@@ -160,7 +165,7 @@ const FhirServers: React.FC = () => {
                   <td>{fhirServer.hostname}</td>
                   <td>
                     {fhirServer.authType ||
-                      (fhirServer.headers?.Authorization ? "basic" : "none")}
+                      (fhirServer.headers?.Authorization ? (fhirServer.headers.Authorization.startsWith("Bearer") ? "bearer" : "basic") : "none")}
                   </td>
                   <td>
                     {
