@@ -4,7 +4,7 @@ import {
   superAdminAccessCheck,
 } from "@/app/utils/auth";
 import { QueryResult } from "pg";
-import { translateNestedObjectKeysIntoCamelCase } from "./util";
+import { translateObjectKeysIntoCamelCase } from "./util";
 import { UNAUTHORIZED_LITERAL } from "@/app/constants";
 import dbService from "./service";
 
@@ -181,7 +181,7 @@ export function camelCaseDbColumnNames<T extends Record<string, unknown>>(
       }
 
       result.rows = result.rows.map((v) => {
-        const val = translateNestedObjectKeysIntoCamelCase(v as object);
+        const val = translateObjectKeysIntoCamelCase(v as object);
         return val as T;
       });
 
