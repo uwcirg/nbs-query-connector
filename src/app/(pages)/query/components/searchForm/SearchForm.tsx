@@ -97,6 +97,7 @@ const SearchForm: React.FC<SearchFormProps> = function SearchForm({
   const [fhirServerConfig, setFhirServerConfig] =
     useState<FhirServerSummary | null>(null);
   const [patientMatchEnabled, setPatientMatchEnabled] = useState<boolean>();
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const params = useSearchParams();
 
   const prefillFromQueryParams = () => {
@@ -377,7 +378,7 @@ const SearchForm: React.FC<SearchFormProps> = function SearchForm({
                       <option value="" disabled>No patients available for {getFhirServer()}</option>
                     )}
                   </Select>
-                  <br>
+                  <br/>
                   <Button
                     disabled = {DEMO_PATIENTS[getFhirServer()] === undefined}
                     secondary
