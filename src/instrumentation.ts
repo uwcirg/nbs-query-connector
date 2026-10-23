@@ -4,7 +4,7 @@
  * connection doesn't have to wait for the fetch.
  */
 export async function register() {
-  if (process.env.DB_SECRET_ARN) {
+  if (process.env.NEXT_RUNTIME === "nodejs" && process.env.DB_SECRET_ARN) {
     try {
       const { fetchDbPassword } = await import("@/app/backend/db/config");
       await fetchDbPassword();
