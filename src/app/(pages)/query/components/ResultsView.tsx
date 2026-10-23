@@ -1,4 +1,4 @@
-import type { PatientRecordsResponse } from "../../../backend/query-execution/actions";
+import type { PatientRecordsResponse } from "../../../backend/query-execution/service";
 import ResultsViewSideNav, {
   NavSection,
 } from "./resultsView/ResultsViewSideNav";
