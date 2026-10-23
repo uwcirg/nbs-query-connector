@@ -21,10 +21,8 @@ import {
   PatientSearchFormValues,
   INSUFFICIENT_PATIENT_IDENTIFIERS,
 } from "@/app/constants";
-import {
-  patientDiscoveryQuery,
-  PatientDiscoveryResponse,
-} from "@/app/backend/query-execution/actions";
+import { patientDiscoveryQuery } from "@/app/backend/query-execution/actions";
+import type { PatientDiscoveryResponse } from "@/app/backend/query-execution/service";
 import {
   type FhirServerSummary,
   getFhirServerSummaries,

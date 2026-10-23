@@ -13,10 +13,10 @@ import { DataContext } from "@/app/utils/DataProvider";
 import { Patient } from "fhir/r4";
 import { CustomUserQuery } from "@/app/models/entities/query";
 import WithAuth from "@/app/ui/components/withAuth/WithAuth";
-import {
+import type {
   PatientDiscoveryResponse,
   PatientRecordsResponse,
-} from "@/app/backend/query-execution/actions";
+} from "@/app/backend/query-execution/service";
 import { getFhirServerNames } from "@/app/backend/fhir-servers/service";
 import Skeleton from "react-loading-skeleton";
 

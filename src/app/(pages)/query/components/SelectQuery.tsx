@@ -2,11 +2,11 @@
 import React, { useState } from "react";
 import SelectSavedQuery from "./selectQuery/SelectSavedQuery";
 
-import {
+import { patientRecordsQuery } from "@/app/backend/query-execution/actions";
+import type {
   PatientDiscoveryResponse,
-  patientRecordsQuery,
   PatientRecordsResponse,
-} from "@/app/backend/query-execution/actions";
+} from "@/app/backend/query-execution/service";
 import { CustomUserQuery } from "@/app/models/entities/query";
 import { Patient } from "fhir/r4";
 
