@@ -12,11 +12,6 @@ import {
   patientRecordsQuery as runPatientRecordsQuery,
 } from "./service";
 
-export type {
-  PatientDiscoveryResponse,
-  PatientRecordsResponse,
-} from "./service";
-
 // Client-facing entry points for query execution. service.ts holds the
 // implementation without access checks; the REST API, which authenticates
 // with a service token rather than a session, calls it directly.
