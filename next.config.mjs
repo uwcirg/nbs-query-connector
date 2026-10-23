@@ -38,6 +38,7 @@ const nextConfig = {
   },
   basePath: "",
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  allowedDevOrigins: [`query-connector.${process.env.BASE_DOMAIN}`],
 };
 
 const withMDX = createMDX({
