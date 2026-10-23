@@ -333,7 +333,7 @@ describe("FHIR Servers Mutual TLS Tests", () => {
         defaultServer: false,
         lastConnectionSuccessful: true,
         authData: {
-          authType: "basic",
+          authType: "bearer",
           bearerToken: "test-token",
         },
       });
@@ -343,7 +343,7 @@ describe("FHIR Servers Mutual TLS Tests", () => {
       // Verify CA cert is cleared
       const servers = await getFhirServerConfigs(true);
       const updatedServer = servers.find((s) => s.id === serverId);
-      expect(updatedServer?.authType).toBe("basic");
+      expect(updatedServer?.authType).toBe("bearer");
       expect(updatedServer?.caCert).toBeNull();
     });
   });

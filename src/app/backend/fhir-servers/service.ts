@@ -214,6 +214,11 @@ class FhirServerConfigService {
       if (authType === "basic" && authData?.bearerToken) {
         headers = {
           ...headers,
+          Authorization: `Basic ${authData.bearerToken}`,
+        };
+      } else if (authType === "bearer" && authData?.bearerToken) {
+        headers = {
+          ...headers,
           Authorization: `Bearer ${authData.bearerToken}`,
         };
       }
@@ -316,6 +321,11 @@ class FhirServerConfigService {
 
       // Add Authorization header for basic auth type
       if (authType === "basic" && authData?.bearerToken) {
+        headers = {
+          ...headers,
+          Authorization: `Basic ${authData.bearerToken}`,
+        };
+      } else if (authType === "bearer" && authData?.bearerToken) {
         headers = {
           ...headers,
           Authorization: `Bearer ${authData.bearerToken}`,

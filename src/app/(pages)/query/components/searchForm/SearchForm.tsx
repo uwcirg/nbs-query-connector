@@ -16,7 +16,7 @@ import {
   raceOptions,
   ethnicityOptions,
   Mode,
-  hyperUnluckyPatient,
+  DEMO_PATIENTS,
   AddressData,
   PatientSearchFormValues,
   INSUFFICIENT_PATIENT_IDENTIFIERS,
@@ -64,34 +64,40 @@ const SearchForm: React.FC<SearchFormProps> = function SearchForm({
   setSearchFormValues,
 }) {
   //Set the patient options based on the demoOption
+  const [demoPatientName, setDemoPatientName] = useState<string>("");
   const [firstName, setFirstName] = useState<string>(
     initialValues?.firstName ?? "",
   );
   const [lastName, setLastName] = useState<string>(
     initialValues?.lastName ?? "",
   );
-  const [phone, setPhone] = useState<string>(initialValues?.phone ?? "");
-  const [email, setEmail] = useState<string>(initialValues?.email ?? "");
-  const [dob, setDOB] = useState<string>(initialValues?.dob ?? "");
-  const [mrn, setMRN] = useState<string>(initialValues?.mrn ?? "");
-  const [address, setAddress] = useState<AddressData>(
-    initialValues?.address ?? {
-      street1: "",
-      street2: "",
-      city: "",
-      state: "",
-      zip: "",
-    },
-  );
+  const [phone, setPhone] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [dob, setDOB] = useState<string>("");
+  const [mrn, setMRN] = useState<string>("");
+  const [address, setAddress] = useState<AddressData>({
+    street1: "",
+    street2: "",
+    city: "",
+    state: "",
+    zip: "",
+  });
   const [gender, setGender] = useState<string>(initialValues?.gender ?? "");
   const [race, setRace] = useState<string>(initialValues?.race ?? "");
   const [ethnicity, setEthnicity] = useState<string>(
     initialValues?.ethnicity ?? "",
   );
 
+  useEffect(() => {
+    const patients = DEMO_PATIENTS[fhirServer];
+    if (!patients) return;
+    setDemoPatientName(Object.keys(patients)[0]);
+  }, [fhirServer]);
+
   const [fhirServerConfig, setFhirServerConfig] =
     useState<FhirServerSummary | null>(null);
   const [patientMatchEnabled, setPatientMatchEnabled] = useState<boolean>();
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const params = useSearchParams();
 
   const prefillFromQueryParams = () => {
@@ -160,14 +166,18 @@ const SearchForm: React.FC<SearchFormProps> = function SearchForm({
   const [_formError, setFormError] = useState(false);
 
   const fillFields = useCallback(() => {
-    setFirstName(hyperUnluckyPatient.FirstName);
-    setLastName(hyperUnluckyPatient.LastName);
-    setDOB(hyperUnluckyPatient.DOB);
-    setMRN(hyperUnluckyPatient.MRN);
-    setPhone(hyperUnluckyPatient.Phone);
-    setAddress({ ...hyperUnluckyPatient.Address });
-    setEmail(hyperUnluckyPatient.Email);
-  }, [fhirServers]);
+    const demoPatient = DEMO_PATIENTS[fhirServer][demoPatientName];
+    if (!demoPatient) {
+      return;
+    }
+    setFirstName(demoPatient.FirstName);
+    setLastName(demoPatient.LastName);
+    setDOB(demoPatient.DOB);
+    setMRN(demoPatient.MRN);
+    setPhone(demoPatient.Phone);
+    setAddress({ ...demoPatient.Address });
+    setEmail(demoPatient.Email);
+  }, [fhirServer, demoPatientName]);
 
   const nameRegex = "^[A-Za-z0-9\u00C0-\u024F\u1E00-\u1EFF\\-'. ]+$";
   const nameRuleHint =
@@ -298,6 +308,10 @@ const SearchForm: React.FC<SearchFormProps> = function SearchForm({
     }
   }
 
+  function getFhirServer() {
+    return params?.get("server") || fhirServer;
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     // Skip URL prefill when we already have persisted values (e.g. the user is
@@ -325,16 +339,67 @@ const SearchForm: React.FC<SearchFormProps> = function SearchForm({
               queries that you can make with the Query Connector. To proceed,
               click “fill fields” below.
             </Label>
-
             <div className={`${styles.searchCallToActionContainer}`}>
+              {!showAdvanced && (
+                <Button
+                  secondary
+                  type="button"
+                  onClick={() => {
+                    fillFields();
+                  }}
+                >
+                  Fill fields
+                </Button>
+              )}
+              {showAdvanced && (
+                <div>
+                  <Label
+                    htmlFor="test_patient"
+                    className="margin-top-0-important width-full"
+                  >
+                    Select Test Patient
+                  </Label>
+                  <Select
+                    id="test_patient"
+                    name="test_patient"
+                    value={demoPatientName}
+                    onChange={(event) => {
+                      setDemoPatientName(event.target.value as string);
+                    }}
+                  >
+                    {DEMO_PATIENTS[getFhirServer()] && (
+                      Object.keys(DEMO_PATIENTS[getFhirServer()]).map((name) => (
+                        <option key={name} value={name}>
+                          {name}
+                        </option>
+                      ))
+                    )}
+                    {DEMO_PATIENTS[getFhirServer()] === undefined && (
+                      <option value="" disabled>No patients available for {getFhirServer()}</option>
+                    )}
+                  </Select>
+                  <br/>
+                  <Button
+                    disabled = {DEMO_PATIENTS[getFhirServer()] === undefined}
+                    secondary
+                    type="button"
+                    onClick={() => {
+                      fillFields();
+                    }}
+                  >
+                    Fill fields
+                  </Button>
+                </div>
+              )}
               <Button
-                secondary
+                unstyled
+                className={`margin-left-auto`}
                 type="button"
                 onClick={() => {
-                  fillFields();
+                  setShowAdvanced(!showAdvanced);
                 }}
               >
-                Fill fields
+                Advanced
               </Button>
             </div>
           </div>

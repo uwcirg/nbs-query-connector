@@ -1,0 +1,51 @@
+# Dev override for docker-compose.complete.yaml.
+#
+# docker-compose.complete.yaml builds query-connector from the production
+# Dockerfile (Next.js `output: standalone`, compiled server.js) — there's no
+# way to reflect a src/ or public/ change in that container without a rebuild.
+#
+# This file swaps the build to Dockerfile.dev (npm install + `next dev`) and
+# bind-mounts ./src and ./public into the container so edits on the host are
+# picked up by Next's dev server/hot reload without rebuilding the image.
+#
+# Usage:
+#   docker compose -f docker-compose.complete.yaml -f docker-compose.dev.yaml up -d --build
+#
+# The --build is only needed the first time (or after changing package.json,
+# next.config.mjs, or anything else outside src/ and public/ — those aren't
+# bind-mounted, so they still require a rebuild to take effect).
+#
+# Host ports are remapped (5433/8090/8091/3001 instead of 5432/8080/8081/3000)
+# so this stack can run alongside another docker-compose.complete.yaml
+# deployment (e.g. one checked out in a sibling worktree) on the same host
+# without port conflicts.
+
+services:
+  db:
+    ports: !override
+      - "5433:5432"
+
+  keycloak:
+    ports: !override
+      - "8091:8080"
+
+  aidbox:
+    ports: !override
+      - "8090:8080"
+
+  query-connector:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: ["npx", "next", "dev", "--turbopack", "-H", "0.0.0.0"]
+    ports: !override
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - AUTH_URL=http://localhost:3001
+      - LOCAL_KEYCLOAK=http://localhost:8091/realms/master
+      - AUTH_ISSUER=http://localhost:8091/realms/master
+    volumes: !override
+      - ./src:/code/src
+      - ./public:/code/public
+      - ./keys:/code/keys

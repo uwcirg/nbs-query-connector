@@ -107,3 +107,4 @@ certificates
 keys/
 *.tsbuildinfo
 next-env.d.ts
+.vscode/
